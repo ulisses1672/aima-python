@@ -10,13 +10,13 @@ sys.path.append(r'D:\_MIAA\FIA\aima-python-master')
 import math
 import warnings
 warnings.filterwarnings("ignore")
-
+import random
 from csp import CSP, min_conflicts
 from collections import Counter
 
 # Define the classes
 classes = ["Math", "English", "History", "Science"]
-quantity = [1, 2, 1,4]
+quantity = [1, 2, 1,1]
 
 class_info = [f"{class_name}{i+1}" for class_name, count in zip(classes, quantity) for i in range(count)]
 
@@ -45,41 +45,50 @@ index = 0
 domains = {}
 domainTotal = {}
 
+
 for class_ in class_info:
     className= class_[:-1]
     teacher = teachers[className]
     index = index + 1
-    domains[class_] = [(time_slot, room) for time_slot in time_slots[:25] if time_slot in availability[teacher] for room in rooms]     #20 slots de tempo disponiveis para cada professor
+    domains[class_] = [(time_slot, room) for time_slot in time_slots[:25] if time_slot in availability[teacher] for room in rooms]     #25 slots de tempo disponiveis para cada professor
 
 # Define the neighbors
 neighbors = {class_: [other_class for other_class in class_info if other_class != class_] for class_ in class_info}
 
+
+def is_teacher_available(teacher, day, time, availability):
+    if teacher in availability:
+        for available_day, available_time in availability[teacher]:
+            if available_day == day and available_time == time:
+                return True
+    return False
+
+
+def get_teacher_by_class(class_name, teachers):
+    return teachers.get(class_name, None)
+
 # Define the constraints
 
-def constraint(A, a, B, b):     # Check if the time slots are different and not consecutive
-    if a[0] != b[0] and (a[0][0] != b[0][0] or abs(time_slots.index(a[0]) - time_slots.index(b[0])) > 1):
-        # Check if the assignment attribute exists
-        if hasattr(class_schedule, 'assignment'):
-            # Count the number of lessons for each class in the morning and afternoon
-            lessons_A_morning = sum(1 for value in class_schedule.assignment[A] if class_schedule.assignment[A] is not None and value[0][1] < 12)
-            lessons_A_afternoon = sum(1 for value in class_schedule.assignment[A] if class_schedule.assignment[A] is not None and value[0][1] >= 12)
-            lessons_B_morning = sum(1 for value in class_schedule.assignment[B] if class_schedule.assignment[B] is not None and value[0][1] < 12)
-            lessons_B_afternoon = sum(1 for value in class_schedule.assignment[B] if class_schedule.assignment[B] is not None and value[0][1] >= 12)
-            
-            # Check if a class has more than 3 lessons in the morning or afternoon
-            if lessons_A_morning > 3 or lessons_A_afternoon > 3 or lessons_B_morning > 3 or lessons_B_afternoon > 3:
-                return False
-            
-            # Check if classes have most of the classes in the same room
-            room_A = class_schedule.assignment[A][0][0] if class_schedule.assignment[A] is not None else None
-            room_B = class_schedule.assignment[B][0][0] if class_schedule.assignment[B] is not None else None
-            
-            if room_A is not None and room_B is not None and room_A != room_B:
-                return False
-        
+def constraint(class_a, time_room_a, class_b, time_room_b):
+    day_a, time_a = time_room_a[0]
+    room_a = time_room_a[1]
+
+    day_b, time_b = time_room_b[0]
+    room_b = time_room_b[1]
+
+    teacher_a = get_teacher_by_class(class_a[:-1], teachers)
+    teacher_b = get_teacher_by_class(class_b[:-1], teachers)
+
+    # Check if both time slots and rooms are available, and if teachers are available
+    if (
+        is_teacher_available(teacher_a, day_a, time_a, availability)
+        and is_teacher_available(teacher_b, day_b, time_b, availability)
+        and (day_a, time_a, room_a) != (day_b, time_b, room_b)
+    ):
         return True
-    
-    return False
+    else:
+        return False
+
 
 # Create the CSP
 class_schedule = CSP(class_info, domains, neighbors, constraint)
