@@ -16,7 +16,7 @@ from collections import Counter
 
 # Define the classes
 classes = ["Math", "English", "History", "Science"]
-quantity = [1, 2, 1,1]
+quantity = [1, 3, 1,1]
 
 class_info = [f"{class_name}{i+1}" for class_name, count in zip(classes, quantity) for i in range(count)]
 
@@ -67,6 +67,14 @@ def is_teacher_available(teacher, day, time, availability):
 def get_teacher_by_class(class_name, teachers):
     return teachers.get(class_name, None)
 
+def checkQuantity(quantity):
+    for value in quantity:
+        if value > 2:
+            return True  
+    return False
+
+    
+
 # Define the constraints
 
 def constraint(class_a, time_room_a, class_b, time_room_b):
@@ -79,11 +87,14 @@ def constraint(class_a, time_room_a, class_b, time_room_b):
     teacher_a = get_teacher_by_class(class_a[:-1], teachers)
     teacher_b = get_teacher_by_class(class_b[:-1], teachers)
 
+    if(checkQuantity(quantity)):
+        return False
+    
     # Check if both time slots and rooms are available, and if teachers are available
     if (
         is_teacher_available(teacher_a, day_a, time_a, availability)
         and is_teacher_available(teacher_b, day_b, time_b, availability)
-        and (day_a, time_a, room_a) != (day_b, time_b, room_b)
+        and (day_a, time_a) != (day_b, time_b)
     ):
         return True
     else:
@@ -96,21 +107,25 @@ class_schedule = CSP(class_info, domains, neighbors, constraint)
 # Solve the CSP
 solution = min_conflicts(class_schedule)
 
+if(solution == None):
+    print("Error , No Solution Founded")
+
+else:
 # Print the solution grouped by day
-schedule_by_day = {day: [] for day in days}
+    schedule_by_day = {day: [] for day in days}
 
 # Populate the schedule_by_day dictionary
-for class_, details in solution.items():
-    day_time, room = details
-    day, time = day_time
-    schedule_by_day[day].append(f"Class: {class_[:-1]}, Time: {time}, Room: {room}")
+    for class_, details in solution.items():
+        day_time, room = details
+        day, time = day_time
+        schedule_by_day[day].append(f"Class: {class_[:-1]}, Time: {time}, Room: {room}")
 
 # Print the schedule grouped by day
-for day, schedule in schedule_by_day.items():
-    print(f"Day: {day}")
-    if not schedule:
-        print("  No classes scheduled.")
-    else:
-        for class_details in schedule:
-            print(f"  {class_details}")
-    print()
+    for day, schedule in schedule_by_day.items():
+        print(f"Day: {day}")
+        if not schedule:
+            print("  No classes scheduled.")
+        else:
+            for class_details in schedule:
+                print(f"  {class_details}")
+        print()
