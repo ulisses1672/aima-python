@@ -38,7 +38,7 @@ availability = {
 }
 
 # Define the time slots for each day
-time_slots = [(day, time) for day in days for time in ["9AM", "11AM", "1PM", "3PM", "5PM"]]
+time_slots = [(day, time) for day in days for time in ["9AM", "11AM", "1PM", "3PM"]]
 
 # Define the domains
 index = 0
@@ -82,6 +82,8 @@ def constraint(class_a, time_room_a, class_b, time_room_b):
     day_b, time_b = time_room_b[0]
     room_b = time_room_b[1]
 
+    print(class_schedule.current)
+    
     teacher_a = get_teacher_by_class(class_a[:-1], teachers)
     teacher_b = get_teacher_by_class(class_b[:-1], teachers)
 
