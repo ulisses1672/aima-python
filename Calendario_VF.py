@@ -11,7 +11,7 @@ import math
 import warnings
 warnings.filterwarnings("ignore")
 import random
-from csp import CSP, min_conflicts
+from csp import *
 from collections import Counter
 
 # Define the classes
@@ -73,8 +73,6 @@ def checkQuantity(quantity):
             return True  
     return False
 
-    
-
 # Define the constraints
 
 def constraint(class_a, time_room_a, class_b, time_room_b):
@@ -87,15 +85,11 @@ def constraint(class_a, time_room_a, class_b, time_room_b):
     teacher_a = get_teacher_by_class(class_a[:-1], teachers)
     teacher_b = get_teacher_by_class(class_b[:-1], teachers)
 
-    if(checkQuantity(quantity)):
-        return False
-    
-    # Check if both time slots and rooms are available, and if teachers are available
-    if (
-        is_teacher_available(teacher_a, day_a, time_a, availability)
+    # Check if both time slots and rooms are available, if teachers are available,
+    # and if the room capacity is sufficient
+    if (is_teacher_available(teacher_a, day_a, time_a, availability)
         and is_teacher_available(teacher_b, day_b, time_b, availability)
-        and (day_a, time_a) != (day_b, time_b)
-    ):
+        and (day_a, time_a) != (day_b, time_b)):
         return True
     else:
         return False
@@ -105,7 +99,9 @@ def constraint(class_a, time_room_a, class_b, time_room_b):
 class_schedule = CSP(class_info, domains, neighbors, constraint)
 
 # Solve the CSP
+# Solve the CSP
 solution = min_conflicts(class_schedule)
+
 
 if(solution == None):
     print("Error , No Solution Founded")
