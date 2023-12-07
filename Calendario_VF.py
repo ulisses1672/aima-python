@@ -32,7 +32,7 @@ teachers = {"Math": "Teacher1", "English": "Teacher2", "History": "Teacher3", "S
 # Define the availability of each teacher
 availability = {
     "Teacher1": [("Monday", "9AM"),("Monday", "11AM"), ("Tuesday", "1PM"), ("Tuesday", "3PM")],
-    "Teacher2": [("Monday", "9AM"),("Monday", "11AM"), ("Monday", "1PM"), ("Monday", "3PM")],
+    "Teacher2": [("Monday", "9AM"),("Monday", "11AM"), ("Monday", "1PM"), ("Monday", "3PM"),("Tuesday", "1PM"), ("Tuesday", "3PM")],
     "Teacher3": [("Monday", "9AM"),("Monday", "11AM"), ("Monday", "1PM"), ("Monday", "3PM"),("Friday", "9AM"),("Friday", "11AM"), ("Friday", "1PM"), ("Friday", "3PM")],
     "Teacher4":  [("Wednesday", "9AM"),("Wednesday", "11AM"), ("Wednesday", "1PM"), ("Wednesday", "3PM"),("Thursday", "9AM"),("Thursday", "11AM"), ("Thursday", "1PM"), ("Thursday", "3PM")]
 }
@@ -75,14 +75,33 @@ def checkQuantity(quantity):
 
 # Define the constraints
 
+def check_classes_on_day(schedule, specified_day):
+    day_class_count = {}
+
+    for class_name, ((day, time), room) in schedule.items():
+        if day == specified_day:
+            if class_name[:-1] in day_class_count:
+                day_class_count[class_name[:-1]] += 1
+                # Check if the count exceeds 2
+                if day_class_count[class_name[:-1]] > 2:
+                    return True
+            else:
+                day_class_count[class_name[:-1]] = 1
+
+    return False
+
+
 def constraint(class_a, time_room_a, class_b, time_room_b):
     day_a, time_a = time_room_a[0]
     room_a = time_room_a[1]
 
     day_b, time_b = time_room_b[0]
     room_b = time_room_b[1]
-
-    print(class_schedule.current)
+    
+    if (check_classes_on_day(class_schedule.current, day_a)):
+        return False
+    if (check_classes_on_day(class_schedule.current, day_b)):
+        return False
     
     teacher_a = get_teacher_by_class(class_a[:-1], teachers)
     teacher_b = get_teacher_by_class(class_b[:-1], teachers)
