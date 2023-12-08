@@ -16,7 +16,7 @@ from collections import Counter
 
 # Define the classes
 classes = ["Math", "English", "History", "Science"]
-quantity = [1, 3, 1,1]
+quantity = [1, 1, 1,7]
 
 class_info = [f"{class_name}{i+1}" for class_name, count in zip(classes, quantity) for i in range(count)]
 
@@ -34,7 +34,7 @@ availability = {
     "Teacher1": [("Monday", "9AM"),("Monday", "11AM"), ("Tuesday", "1PM"), ("Tuesday", "3PM")],
     "Teacher2": [("Monday", "9AM"),("Monday", "11AM"), ("Monday", "1PM"), ("Monday", "3PM"),("Tuesday", "1PM"), ("Tuesday", "3PM")],
     "Teacher3": [("Monday", "9AM"),("Monday", "11AM"), ("Monday", "1PM"), ("Monday", "3PM"),("Friday", "9AM"),("Friday", "11AM"), ("Friday", "1PM"), ("Friday", "3PM")],
-    "Teacher4":  [("Wednesday", "9AM"),("Wednesday", "11AM"), ("Wednesday", "1PM"), ("Wednesday", "3PM"),("Thursday", "9AM"),("Thursday", "11AM"), ("Thursday", "1PM"), ("Thursday", "3PM")]
+    "Teacher4":  [("Monday", "9AM"),("Monday", "11AM"), ("Tuesday", "9AM"), ("Tuesday", "11AM") , ("Tuesday", "1PM"), ("Tuesday", "3PM"),("Wednesday", "9AM"),("Wednesday", "11AM"), ("Wednesday", "1PM"), ("Wednesday", "3PM"),("Thursday", "9AM"),("Thursday", "11AM"), ("Thursday", "1PM"), ("Thursday", "3PM"),("Friday", "11AM"), ("Friday", "1PM"), ("Friday", "3PM")]
 }
 
 # Define the time slots for each day
@@ -90,6 +90,18 @@ def check_classes_on_day(schedule, specified_day):
 
     return False
 
+def check_days_per_week(schedule, class_name):
+    days_count = Counter()
+    counte = 0
+    
+    for other_class, ((day, _), _) in schedule.items():
+        if other_class[:-1] == class_name[:-1]:
+            days_count[day] += 1
+
+    if(len(days_count)<=4):
+        return False
+    else:
+        return True
 
 def constraint(class_a, time_room_a, class_b, time_room_b):
     day_a, time_a = time_room_a[0]
@@ -97,11 +109,18 @@ def constraint(class_a, time_room_a, class_b, time_room_b):
 
     day_b, time_b = time_room_b[0]
     room_b = time_room_b[1]
+
+
+    if check_days_per_week(class_schedule.current, class_a):
+        return False
+    if check_days_per_week(class_schedule.current, class_b):
+        return False
     
     if (check_classes_on_day(class_schedule.current, day_a)):
         return False
     if (check_classes_on_day(class_schedule.current, day_b)):
         return False
+    
     
     teacher_a = get_teacher_by_class(class_a[:-1], teachers)
     teacher_b = get_teacher_by_class(class_b[:-1], teachers)
@@ -114,6 +133,7 @@ def constraint(class_a, time_room_a, class_b, time_room_b):
         return True
     else:
         return False
+
 
 
 # Create the CSP
