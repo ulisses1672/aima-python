@@ -16,7 +16,24 @@ from collections import Counter
 
 # Define the classes
 classes = ["Math", "English", "History", "Science"]
-quantity = [1, 1, 1,7]
+# Generate random class quantities
+min_quantity = 1
+max_total_classes = 10
+quantity = []
+
+# quantity = [1, 1, 1,7] // old
+
+# Generate a random total number of classes between 4 and 10
+desired_total_classes = random.randint(len(classes), 10)
+
+# Distribute the total randomly among the classes
+quantity = [1] * len(classes)  # Start with at least 1 for each class
+remaining_classes = desired_total_classes - len(classes)
+
+# Distribute the remaining classes randomly
+for _ in range(remaining_classes):
+    index = random.randint(0, len(classes) - 1)
+    quantity[index] += 1
 
 class_info = [f"{class_name}{i+1}" for class_name, count in zip(classes, quantity) for i in range(count)]
 
