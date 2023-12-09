@@ -39,7 +39,7 @@ for _ in range(remaining_classes):
 class_info = [f"{class_name}{i+1}" for class_name, count in zip(classes, quantity) for i in range(count)]
 
 # Define the rooms
-rooms = ["Room1", "Room2", "Room3"]
+rooms = ["Room1", "Room2", "Room3", "Gym"]
 
 # Define the days
 days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
@@ -85,8 +85,6 @@ for class_ in class_info:
 # Define the neighbors
 neighbors = {class_: [other_class for other_class in class_info if other_class != class_] for class_ in class_info}
 
-# The rest of the code remains the same
-# ...
 
 def is_teacher_available(teacher, day, time, availability):
     if teacher in availability:
@@ -162,6 +160,43 @@ def constraint(class_a, time_room_a, class_b, time_room_b):
     if (is_teacher_available(teacher_a, day_a, time_a, availability)
         and is_teacher_available(teacher_b, day_b, time_b, availability)
         and (day_a, time_a) != (day_b, time_b)):
+        return True
+    else:
+        return False
+
+def constraint(class_a, time_room_a, class_b, time_room_b):
+    day_a, time_a = time_room_a[0]
+    room_a = time_room_a[1]
+
+    day_b, time_b = time_room_b[0]
+    room_b = time_room_b[1]
+
+    if check_days_per_week(class_schedule.current, class_a):
+        return False
+    if check_days_per_week(class_schedule.current, class_b):
+        return False
+    
+    if (check_classes_on_day(class_schedule.current, day_a)):
+        return False
+    if (check_classes_on_day(class_schedule.current, day_b)):
+        return False
+    
+    teacher_a = get_teacher_by_class(class_a[:-1], teachers)
+    teacher_b = get_teacher_by_class(class_b[:-1], teachers)
+
+    # Check if both time slots and rooms are available, if teachers are available,
+    # and if the room capacity is sufficient
+    if (
+        is_teacher_available(teacher_a, day_a, time_a, availability)
+        and is_teacher_available(teacher_b, day_b, time_b, availability)
+        and (day_a, time_a) != (day_b, time_b)
+    ):
+        # New constraint: Physical_Education can only be taught in the room "Gym"
+        if class_a[:-1] == "Physical_Education" and room_a != "Gym":
+            return False
+        if class_b[:-1] == "Physical_Education" and room_b != "Gym":
+            return False
+        
         return True
     else:
         return False
