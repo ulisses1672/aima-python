@@ -1,7 +1,6 @@
 import sys
 sys.path.append(r'D:\_MIAA\FIA\aima-python-master')
 
-#from csp import *
 # from notebook import psource, plot_NQueens
 
 # %matplotlib inline
@@ -13,6 +12,9 @@ warnings.filterwarnings("ignore")
 import random
 from csp import *
 from collections import Counter
+from prettytable import PrettyTable
+
+
 
 # Define the classes
 Lesi_classes = ['Math', 'English', 'History', 'Art', 'Music']
@@ -276,7 +278,41 @@ class_schedule = CSP(class_info, domains, neighbors, constraint)
 # Solve the CSP
 solution = min_conflicts(class_schedule)
 
+# Create a table with columns for each day
+combined_table = PrettyTable()
+combined_table.field_names = ["Lesson", "Turma", "Time", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
+# Populate the combined table
+for class_, details in solution.items():
+    day_time, room = details
+    day, time = day_time
+    class_name = class_[:-1]
+    teacher = teachers[class_name]
+
+    # Determine if the class belongs to Lesi or Miaa
+    if class_name in Lesi_classes:
+        category = "Lesi"
+    elif class_name in Miaa_classes:
+        category = "Miaa"
+    else:
+        category = "Unknown"
+
+    # Add rows to the combined table
+    combined_table.add_row([
+        class_name,
+        category,
+        time,
+        "X" if day == "Monday" else "",
+        "X" if day == "Tuesday" else "",
+        "X" if day == "Wednesday" else "",
+        "X" if day == "Thursday" else "",
+        "X" if day == "Friday" else ""
+    ])
+
+# Print the combined table
+print(combined_table)
+
+""""
 if(solution == None):
     print("Error , No Solution Founded")
 
@@ -310,3 +346,4 @@ for day, schedule in schedule_by_day.items():
         for class_details in schedule:
             print(f"  {class_details}")
     print()
+"""""
