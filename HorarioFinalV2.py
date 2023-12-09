@@ -16,27 +16,32 @@ from prettytable import PrettyTable
 
 
 
-# Define the classes
-Lesi_classes = ['Math', 'English', 'History', 'Art', 'Music']
-Miaa_classes = ['Physics', 'Chemistry', 'Biology', 'Science', 'Physical_Education']
-classes = Lesi_classes + Miaa_classes
 
-# Generate random class quantities
-min_quantity = 1
-max_total_classes = 10
-quantity = []
+def quantity_add(classe,quantity):
+    # Generate a random total number of classes between 4 and 10
+    desired_total_classes = random.randint(len(classe), 10)
 
-# Generate a random total number of classes between 4 and 10
-desired_total_classes = random.randint(len(classes), 10)
-
-# Distribute the total randomly among the classes
-quantity = [1] * len(classes)  # Start with at least 1 for each class
-remaining_classes = desired_total_classes - len(classes)
+    # Distribute the total randomly among the classes
+    quantity = [1] * len(classe)  # Start with at least 1 for each class
+    remaining_classes = desired_total_classes - len(classe)
 
 # Distribute the remaining classes randomly
-for _ in range(remaining_classes):
-    index = random.randint(0, len(classes) - 1)
-    quantity[index] += 1
+    for _ in range(remaining_classes):
+        index = random.randint(0, len(classe) - 1)
+        quantity[index] += 1
+
+    return quantity
+
+# Define the classes
+quantity = []
+
+Lesi_classes = ['Math', 'English', 'History', 'Art', 'Music']
+quantity = quantity_add(Lesi_classes,quantity)
+Miaa_classes = ['Physics', 'Chemistry', 'Biology', 'Science', 'Physical_Education']
+classes = Lesi_classes + Miaa_classes
+quantity = quantity + quantity_add(Miaa_classes,quantity)
+
+
 
 class_info = [f"{class_name}{i+1}" for class_name, count in zip(classes, quantity) for i in range(count)]
 
