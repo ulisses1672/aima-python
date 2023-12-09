@@ -164,6 +164,8 @@ def constraint(class_a, time_room_a, class_b, time_room_b):
     else:
         return False
 
+"""" 
+#Aulas de Educação Fisica apenas na sala de Gym
 def constraint(class_a, time_room_a, class_b, time_room_b):
     day_a, time_a = time_room_a[0]
     room_a = time_room_a[1]
@@ -197,6 +199,38 @@ def constraint(class_a, time_room_a, class_b, time_room_b):
         if class_b[:-1] == "Physical_Education" and room_b != "Gym":
             return False
         
+        return True
+    else:
+        return False
+"""""
+#Aulas de Educação Fisica apenas na sala de Gym e Gym apenas com aulas de Educação Fisica
+def constraint(class_a, time_room_a, class_b, time_room_b):
+    day_a, time_a = time_room_a[0]
+    room_a = time_room_a[1]
+
+    day_b, time_b = time_room_b[0]
+    room_b = time_room_b[1]
+
+    if check_days_per_week(class_schedule.current, class_a):
+        return False
+    if check_days_per_week(class_schedule.current, class_b):
+        return False
+    
+    if (check_classes_on_day(class_schedule.current, day_a)):
+        return False
+    if (check_classes_on_day(class_schedule.current, day_b)):
+        return False
+    
+    teacher_a = get_teacher_by_class(class_a[:-1], teachers)
+    teacher_b = get_teacher_by_class(class_b[:-1], teachers)
+
+    # Check if both time slots and rooms are available, if teachers are available,
+    # and if the room capacity is sufficient
+    if (is_teacher_available(teacher_a, day_a, time_a, availability)
+        and is_teacher_available(teacher_b, day_b, time_b, availability)
+        and (day_a, time_a) != (day_b, time_b)
+        and ((class_a[:-1] == 'Physical_Education' and room_a == 'Gym') or (class_a[:-1] != 'Physical_Education' and room_a != 'Gym'))
+        and ((class_b[:-1] == 'Physical_Education' and room_b == 'Gym') or (class_b[:-1] != 'Physical_Education' and room_b != 'Gym'))):
         return True
     else:
         return False
