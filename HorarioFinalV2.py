@@ -203,6 +203,7 @@ def constraint(class_a, time_room_a, class_b, time_room_b):
     else:
         return False
 """""
+
 #Aulas de Educação Fisica apenas na sala de Gym e Gym apenas com aulas de Educação Fisica
 def constraint(class_a, time_room_a, class_b, time_room_b):
     day_a, time_a = time_room_a[0]
@@ -235,6 +236,37 @@ def constraint(class_a, time_room_a, class_b, time_room_b):
     else:
         return False
 
+#Restrição de nº de alunos por sala
+def student_count_constraint(class_a, time_room_a, class_b, time_room_b):
+    day_a, time_a = time_room_a[0]
+    room_a = time_room_a[1]
+
+    day_b, time_b = time_room_b[0]
+    room_b = time_room_b[1]
+
+    if check_days_per_week(class_schedule.current, class_a):
+        return False
+    if check_days_per_week(class_schedule.current, class_b):
+        return False
+    
+    if (check_classes_on_day(class_schedule.current, day_a)):
+        return False
+    if (check_classes_on_day(class_schedule.current, day_b)):
+        return False
+    
+    teacher_a = get_teacher_by_class(class_a[:-1], teachers)
+    teacher_b = get_teacher_by_class(class_b[:-1], teachers)
+
+    # Check if both time slots and rooms are available, if teachers are available,
+    # and if the room capacity is sufficient
+    if (is_teacher_available(teacher_a, day_a, time_a, availability)
+        and is_teacher_available(teacher_b, day_b, time_b, availability)
+        and (day_a, time_a) != (day_b, time_b)
+        and (class_a[:-1] == 'Lesi' or (room_a != 'Room2' or class_a[:-1] == 'Miaa'))
+        and (class_b[:-1] == 'Lesi' or (room_b != 'Room2' or class_b[:-1] == 'Miaa'))):
+        return True
+    else:
+        return False
 
 
 # Create the CSP
