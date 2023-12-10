@@ -283,9 +283,12 @@ class_schedule = CSP(class_info, domains, neighbors, constraint)
 # Solve the CSP
 solution = min_conflicts(class_schedule)
 
-# Create a table with columns for each day
+# Create a table with columns for each day and room
 combined_table = PrettyTable()
-combined_table.field_names = ["Lesson", "Turma", "Time", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+combined_table.field_names = ["Class", "Category", "Time", "Room", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+
+# Initialize a variable to track the last category
+last_category = None
 
 # Populate the combined table
 for class_, details in solution.items():
@@ -302,17 +305,24 @@ for class_, details in solution.items():
     else:
         category = "Unknown"
 
+    # Add a line between Lesi and Miaa classes
+    if last_category is not None and last_category != category:
+        combined_table.add_row(["----", "----", "----", "----", "----", "----", "----", "----", "----"])
+
     # Add rows to the combined table
     combined_table.add_row([
         class_name,
         category,
         time,
+        room,
         "X" if day == "Monday" else "",
         "X" if day == "Tuesday" else "",
         "X" if day == "Wednesday" else "",
         "X" if day == "Thursday" else "",
         "X" if day == "Friday" else ""
     ])
+
+    last_category = category
 
 # Print the combined table
 print(combined_table)
