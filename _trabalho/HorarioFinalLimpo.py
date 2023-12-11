@@ -110,8 +110,7 @@ def checkQuantity(quantity):
             return True  
     return False
 
-#Restrições
-#Define the constraints
+#Restrições:
 
 #Restrição de 2 aulas por dia
 def check_classes_on_day(schedule, specified_day):
