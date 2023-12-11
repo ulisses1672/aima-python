@@ -47,7 +47,7 @@ quantity = quantity + quantity_add(Miaa_classes,quantity)
 class_info = [f"{class_name}{i+1}" for class_name, count in zip(classes, quantity) for i in range(count)]
 
 #Defina as salas
-rooms = ["Room1", "Room2", "Room3", "Gym"]
+rooms = ["Room1", "Room2", "Room3", "Room4", "Room5", "Gym"]
 
 #Defina os dias
 days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
